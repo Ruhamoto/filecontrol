@@ -208,7 +208,6 @@
         const API_KEY = 'AIzaSyBdlmiaOkL9aHvxt7cOEwK793Twr3S1v1w';
         const CLIENT_ID = '186346187188-6o1i90f7dngu475umv2o5s31jmrgo64h.apps.googleusercontent.com';
 
-        // スコープは必須です
         const SCOPES = [
             'https://www.googleapis.com/auth/drive.file',
             'https://www.googleapis.com/auth/drive',
@@ -220,54 +219,71 @@
         let gisInited = false;
         let isAuthorized = false;
 
-        // UI要素
         const authButton = document.getElementById('authButton');
-        const authStatus = document.getElementById('authStatus');
         const userName = document.getElementById('userName');
         const searchResultsDiv = document.getElementById('searchResults');
         const activityLogDiv = document.getElementById('activityLog');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
 
-        // メッセージボックスを表示
         function showMessage(text) {
             messageText.innerText = text;
             messageBox.style.display = 'flex';
         }
 
-        // メッセージボックスを非表示
         function hideMessage() {
             messageBox.style.display = 'none';
         }
 
-        /**
-         * gapi.clientを初期化します。
-         */
-        async function initializeGapiClient() {
-            await gapi.client.init({
-                apiKey: API_KEY,
-                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest", "https://www.googleapis.com/discovery/v1/apis/driveactivity/v2/rest"]
-            });
-            gapiInited = true;
-            maybeEnableAuthButton();
-        }
+        // Initialize the app after both libraries are loaded and the DOM is ready
+        window.onload = function() {
+            const checkAndInit = () => {
+                if (typeof gapi !== 'undefined' && typeof google !== 'undefined' && typeof google.accounts !== 'undefined') {
+                    // Both libraries are loaded, proceed with initialization
+                    gapi.load('client', () => {
+                        gapi.client.init({
+                            apiKey: API_KEY,
+                            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest", "https://www.googleapis.com/discovery/v1/apis/driveactivity/v2/rest"]
+                        }).then(() => {
+                            gapiInited = true;
+                            handleClientLoad();
+                        }).catch(err => {
+                            showMessage('Google API クライアントの初期化に失敗しました: ' + err.result.error.message);
+                        });
+                    });
 
-        /**
-         * 初期化が完了したかどうかをチェックします。
-         */
-        function maybeEnableAuthButton() {
+                    tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: CLIENT_ID,
+                        scope: SCOPES.join(' '),
+                        callback: (tokenResponse) => {
+                            if (tokenResponse && tokenResponse.access_token) {
+                                gapi.client.setToken(tokenResponse);
+                                isAuthorized = true;
+                                updateAuthStatus();
+                                queryActivities();
+                            }
+                        },
+                    });
+                    gisInited = true;
+                    handleClientLoad();
+
+                } else {
+                    // Libraries not yet loaded, try again in a bit
+                    setTimeout(checkAndInit, 100);
+                }
+            };
+            checkAndInit();
+        };
+
+        function handleClientLoad() {
             if (gapiInited && gisInited) {
                 authButton.onclick = handleAuthClick;
                 authButton.disabled = false;
             }
         }
 
-        /**
-         * 認証ボタンがクリックされたときに実行されます。
-         */
         function handleAuthClick() {
             if (isAuthorized) {
-                // サインアウトのロジックは実装が複雑なため、シンプルに状態をリセット
                 isAuthorized = false;
                 gapi.client.setToken('');
                 updateAuthStatus();
@@ -276,9 +292,6 @@
             }
         }
 
-        /**
-         * 認証状態に基づいてUIを更新します。
-         */
         function updateAuthStatus() {
             if (isAuthorized) {
                 gapi.client.drive.about.get({ fields: 'user' }).then(response => {
@@ -294,15 +307,11 @@
                 authButton.innerText = 'Google にサインイン';
                 authButton.classList.remove('btn-secondary');
                 authButton.classList.add('btn-primary');
-                // ログをクリア
                 searchResultsDiv.innerHTML = '';
                 activityLogDiv.innerHTML = '<p class="text-gray-500">サインインしてアクティビティを読み込みます...</p>';
             }
         }
 
-        /**
-         * ファイルとフォルダを検索します。
-         */
         async function searchFilesAndFolders() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -337,9 +346,6 @@
             }
         }
 
-        /**
-         * ファイルをアップロードします。
-         */
         async function uploadFile() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -378,9 +384,6 @@
             }
         }
 
-        /**
-         * ファイルをダウンロードします。
-         */
         async function downloadFile() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -416,9 +419,6 @@
             }
         }
 
-        /**
-         * ファイルやフォルダを共有します。
-         */
         async function shareFile() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -450,9 +450,6 @@
             }
         }
 
-        /**
-         * ファイルやフォルダの共有を停止します。
-         */
         async function unshareFile() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -469,7 +466,6 @@
                 const permissionsResponse = await gapi.client.drive.permissions.list({ fileId: fileId });
                 const permissions = permissionsResponse.result.permissions;
                 let userPermissionId = null;
-                // 自分の権限IDを取得
                 const aboutResponse = await gapi.client.drive.about.get({ fields: 'user' });
                 const myEmail = aboutResponse.result.user.emailAddress;
 
@@ -496,9 +492,6 @@
             }
         }
 
-        /**
-         * フォルダを作成します。
-         */
         async function createFolder() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -527,9 +520,6 @@
             }
         }
 
-        /**
-         * ファイルまたはフォルダを削除します。
-         */
         async function deleteFileOrFolder() {
             if (!isAuthorized) {
                 showMessage('サインインしてください。');
@@ -550,9 +540,6 @@
             }
         }
 
-        /**
-         * ドライブのアクティビティを監視します。
-         */
         async function queryActivities() {
             if (!isAuthorized) {
                 activityLogDiv.innerHTML = '<p class="text-gray-500">サインインしてアクティビティを読み込みます...</p>';
@@ -569,7 +556,7 @@
             try {
                 const response = await gapi.client.driveactivity.activities.query(params);
                 const activities = response.result.activities;
-                activityLogDiv.innerHTML = ''; // クリア
+                activityLogDiv.innerHTML = '';
 
                 if (activities && activities.length > 0) {
                     activities.forEach(activity => {
