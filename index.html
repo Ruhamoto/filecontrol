@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Drive API アプリ</title>
+    <title>ファイルの管理</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #ffffff;
             color: #1f2937;
         }
         .container {
@@ -90,16 +90,16 @@
 
     <div class="container space-y-6">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold">Google Drive API アプリ</h1>
+            <h1 class="text-3xl font-bold">ファイルの管理</h1>
             <div id="authStatus" class="flex items-center space-x-4">
                 <span id="userName" class="text-gray-600"></span>
-                <button id="authButton" class="btn btn-primary">Google にサインイン</button>
+                <button id="authButton" class="btn btn-primary">Googleでサインイン</button>
             </div>
         </div>
 
         <!-- ファイル/フォルダの検索 -->
         <div class="card">
-            <h2 class="text-2xl font-semibold mb-4">ファイル/フォルダの検索</h2>
+            <h2 class="text-2xl font-semibold mb-4">ファイル/フォルダを検索</h2>
             <div class="flex items-end space-x-4">
                 <div class="w-full">
                     <label for="searchQuery" class="block text-sm font-medium text-gray-700">検索キーワード</label>
@@ -113,7 +113,7 @@
         <div class="grid md:grid-cols-2 gap-6">
             <!-- ファイルのアップロード -->
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4">ファイルのアップロード</h2>
+                <h2 class="text-2xl font-semibold mb-4">ファイルをアップロード</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="uploadFile" class="block text-sm font-medium text-gray-700">ファイルを選択</label>
@@ -129,11 +129,11 @@
 
             <!-- ファイルのダウンロード -->
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4">ファイルのダウンロード</h2>
+                <h2 class="text-2xl font-semibold mb-4">ファイルをダウンロード</h2>
                 <div class="space-y-4">
                     <div>
-                        <label for="downloadFileId" class="block text-sm font-medium text-gray-700">ファイルID</label>
-                        <input type="text" id="downloadFileId" placeholder="ダウンロードしたいファイルのID" class="mt-1 block w-full rounded-md shadow-sm">
+                        <label for="downloadFileUrl" class="block text-sm font-medium text-gray-700">ファイル/フォルダURL</label>
+                        <input type="text" id="downloadFileUrl" placeholder="例: https://drive.google.com/file/d/..." class="mt-1 block w-full rounded-md shadow-sm">
                     </div>
                     <button onclick="downloadFile()" class="btn btn-primary w-full">ダウンロード</button>
                 </div>
@@ -141,11 +141,11 @@
 
             <!-- ファイル/フォルダの共有 -->
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4">ファイル/フォルダの共有</h2>
+                <h2 class="text-2xl font-semibold mb-4">ファイル/フォルダを共有</h2>
                 <div class="space-y-4">
                     <div>
-                        <label for="shareId" class="block text-sm font-medium text-gray-700">ファイル/フォルダID</label>
-                        <input type="text" id="shareId" placeholder="共有したいファイルのID" class="mt-1 block w-full rounded-md shadow-sm">
+                        <label for="shareUrl" class="block text-sm font-medium text-gray-700">ファイル/フォルダURL</label>
+                        <input type="text" id="shareUrl" placeholder="例: https://drive.google.com/drive/folders/..." class="mt-1 block w-full rounded-md shadow-sm">
                     </div>
                     <div>
                         <label for="shareEmail" class="block text-sm font-medium text-gray-700">共有相手のメールアドレス</label>
@@ -157,11 +157,11 @@
 
             <!-- ファイル/フォルダの共有停止 -->
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4">ファイル/フォルダの共有停止</h2>
+                <h2 class="text-2xl font-semibold mb-4">ファイル/フォルダを共有停止</h2>
                 <div class="space-y-4">
                     <div>
-                        <label for="unshareId" class="block text-sm font-medium text-gray-700">ファイル/フォルダID</label>
-                        <input type="text" id="unshareId" placeholder="共有停止したいファイルのID" class="mt-1 block w-full rounded-md shadow-sm">
+                        <label for="unshareUrl" class="block text-sm font-medium text-gray-700">ファイル/フォルダURL</label>
+                        <input type="text" id="unshareUrl" placeholder="例: https://drive.google.com/file/d/..." class="mt-1 block w-full rounded-md shadow-sm">
                     </div>
                     <button onclick="unshareFile()" class="btn btn-primary w-full">共有停止</button>
                 </div>
@@ -169,7 +169,7 @@
 
             <!-- フォルダの作成/削除 -->
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4">フォルダの作成</h2>
+                <h2 class="text-2xl font-semibold mb-4">フォルダを作成</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="createFolderName" class="block text-sm font-medium text-gray-700">新しいフォルダ名</label>
@@ -180,11 +180,11 @@
             </div>
 
             <div class="card">
-                <h2 class="text-2xl font-semibold mb-4">フォルダ/ファイルの削除</h2>
+                <h2 class="text-2xl font-semibold mb-4">フォルダ/ファイルを削除</h2>
                 <div class="space-y-4">
                     <div>
-                        <label for="deleteId" class="block text-sm font-medium text-gray-700">ファイル/フォルダID</label>
-                        <input type="text" id="deleteId" placeholder="削除したいID" class="mt-1 block w-full rounded-md shadow-sm">
+                        <label for="deleteUrl" class="block text-sm font-medium text-gray-700">ファイル/フォルダURL</label>
+                        <input type="text" id="deleteUrl" placeholder="例: https://drive.google.com/drive/folders/..." class="mt-1 block w-full rounded-md shadow-sm">
                     </div>
                     <button onclick="deleteFileOrFolder()" class="btn btn-primary w-full">削除</button>
                 </div>
@@ -194,6 +194,7 @@
         <!-- ファイル アクティビティの監視 -->
         <div class="card">
             <h2 class="text-2xl font-semibold mb-4">最近のアクティビティ</h2>
+            <p class="text-gray-500 mb-2">フォルダの作成などの操作を行うと、ここに表示されます。</p>
             <div id="activityLog" class="space-y-2 text-sm max-h-96 overflow-y-auto">
                 <p class="text-gray-500">アクティビティを読み込み中です...</p>
             </div>
@@ -304,12 +305,25 @@
                 });
             } else {
                 userName.innerText = '';
-                authButton.innerText = 'Google にサインイン';
+                authButton.innerText = 'Googleでサインイン';
                 authButton.classList.remove('btn-secondary');
                 authButton.classList.add('btn-primary');
                 searchResultsDiv.innerHTML = '';
                 activityLogDiv.innerHTML = '<p class="text-gray-500">サインインしてアクティビティを読み込みます...</p>';
             }
+        }
+
+        // ファイル/フォルダのURLからIDを抽出するヘルパー関数
+        function extractIdFromUrl(url) {
+            if (!url) return null;
+            // 共通のGoogle Drive URLパターンをチェック
+            const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (fileMatch) return fileMatch[1];
+
+            const folderMatch = url.match(/\/drive\/folders\/([a-zA-Z0-9_-]+)/);
+            if (folderMatch) return folderMatch[1];
+            
+            return null;
         }
 
         async function searchFilesAndFolders() {
@@ -354,11 +368,28 @@
 
             const fileInput = document.getElementById('uploadFile');
             const file = fileInput.files[0];
-            const fileName = document.getElementById('uploadFileName').value || file.name;
+            const userProvidedName = document.getElementById('uploadFileName').value;
+            let fileName = userProvidedName;
 
             if (!file) {
                 showMessage('アップロードするファイルを選択してください。');
                 return;
+            }
+
+            // Check if the user has provided a file name.
+            if (userProvidedName) {
+                // If the user-provided name does NOT contain an extension
+                if (!userProvidedName.includes('.')) {
+                    // Get the original file's extension
+                    const originalExtension = file.name.split('.').pop();
+                    // Append the extension if it exists and is not the same as the full original name
+                    if (originalExtension && originalExtension !== file.name) {
+                        fileName += `.${originalExtension}`;
+                    }
+                }
+            } else {
+                // If the user did not provide a file name, use the original file name
+                fileName = file.name;
             }
 
             const metadata = {
@@ -390,9 +421,11 @@
                 return;
             }
 
-            const fileId = document.getElementById('downloadFileId').value;
+            const fileUrl = document.getElementById('downloadFileUrl').value;
+            const fileId = extractIdFromUrl(fileUrl);
+            
             if (!fileId) {
-                showMessage('ファイルIDを入力してください。');
+                showMessage('有効なファイル/フォルダURLを入力してください。');
                 return;
             }
 
@@ -425,11 +458,12 @@
                 return;
             }
 
-            const fileId = document.getElementById('shareId').value;
+            const fileUrl = document.getElementById('shareUrl').value;
+            const fileId = extractIdFromUrl(fileUrl);
             const email = document.getElementById('shareEmail').value;
 
             if (!fileId || !email) {
-                showMessage('IDとメールアドレスを入力してください。');
+                showMessage('有効なURLとメールアドレスを入力してください。');
                 return;
             }
 
@@ -456,9 +490,11 @@
                 return;
             }
 
-            const fileId = document.getElementById('unshareId').value;
+            const fileUrl = document.getElementById('unshareUrl').value;
+            const fileId = extractIdFromUrl(fileUrl);
+            
             if (!fileId) {
-                showMessage('ファイルIDを入力してください。');
+                showMessage('有効なファイル/フォルダURLを入力してください。');
                 return;
             }
 
@@ -515,6 +551,7 @@
                     fields: 'id'
                 });
                 showMessage(`フォルダ「${folderName}」を作成しました。ID: ${response.result.id}`);
+                queryActivities(); // フォルダ作成後にアクティビティを再読み込み
             } catch (err) {
                 showMessage('フォルダの作成に失敗しました: ' + err.result.error.message);
             }
@@ -526,15 +563,18 @@
                 return;
             }
 
-            const fileId = document.getElementById('deleteId').value;
+            const fileUrl = document.getElementById('deleteUrl').value;
+            const fileId = extractIdFromUrl(fileUrl);
+            
             if (!fileId) {
-                showMessage('削除したいファイル/フォルダIDを入力してください。');
+                showMessage('有効なファイル/フォルダURLを入力してください。');
                 return;
             }
 
             try {
                 await gapi.client.drive.files.delete({ fileId: fileId });
                 showMessage(`ID: ${fileId}を削除しました。`);
+                queryActivities(); // 削除後にアクティビティを再読み込み
             } catch (err) {
                 showMessage('削除に失敗しました: ' + err.result.error.message);
             }
@@ -571,10 +611,12 @@
                         activityLogDiv.appendChild(logItem);
                     });
                 } else {
-                    activityLogDiv.innerHTML = '<p class="text-gray-500">最近のアクティビティはありません。</p>';
+                    activityLogDiv.innerHTML = '<p class="text-gray-500">最近のアクティビティはありません。新しいフォルダを作成して、動作を確認してみてください。</p>';
                 }
             } catch (err) {
-                showMessage('アクティビティの取得に失敗しました: ' + err.result.error.message);
+                console.error('Failed to query activities:', err);
+                showMessage('アクティビティの取得に失敗しました: ' + (err.result?.error?.message || '不明なエラー'));
+                activityLogDiv.innerHTML = '<p class="text-gray-500">アクティビティの取得中にエラーが発生しました。</p>';
             }
         }
 
