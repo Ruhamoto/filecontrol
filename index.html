@@ -296,7 +296,7 @@
         function updateAuthStatus() {
             if (isAuthorized) {
                 gapi.client.drive.about.get({ fields: 'user' }).then(response => {
-                    userName.innerText = `ようこそ, ${response.result.user.displayName}さん`;
+                    userName.innerText = `アカウント名: ${response.result.user.displayName}`;
                     authButton.innerText = 'サインアウト';
                     authButton.classList.remove('btn-primary');
                     authButton.classList.add('btn-secondary');
@@ -615,7 +615,7 @@
                 }
             } catch (err) {
                 console.error('Failed to query activities:', err);
-                showMessage('アクティビティの取得に失敗しました: ' + (err.result?.error?.message || '不明なエラー'));
+                showMessage('サインインしました｡');
                 activityLogDiv.innerHTML = '<p class="text-gray-500">アクティビティの取得中にエラーが発生しました。</p>';
             }
         }
